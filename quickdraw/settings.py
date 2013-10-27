@@ -41,7 +41,8 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.locale.LocaleMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
-	'django.contrib.messages.middleware.MessageMiddleware'
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'bambu.analytics.middleware.AnalyticsMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

@@ -1,10 +1,18 @@
-{% extends 'qanda/question.html' %}
+{% extends 'qanda/question-open.html' %}
 {% load icons humanize %}
 {% load url from future %}
 
 {% block question_content %}
 	{% if not vote_cast %}
-		{% include 'qanda/poll-vote.inc.html' %}
+		<form method="post">
+			{% for answer in answers %}
+				<p>
+					<button class="btn btn-primary" type="submit" name="answer" value="{{ answer.pk }}">{{ answer.title }}</button>
+				</p>
+			{% endfor %}
+
+			{% csrf_token %}
+		</form>
 	{% else %}
 		<p>
 			Your vote has already been cast.<br />
@@ -15,4 +23,50 @@
 			<a class="btn btn-success" href="/{% ifequal question.kind 'p' %}#poll{% else %}#list{% endifequal %}">{% icon 'plus' %} Create {% ifequal request.user.pk question.creator.pk %}a new{% else %}your own{% endifequal %} {{ question.get_kind_display }}</a>
 		</p>
 	{% endif %}
+	
+	{% ifequal request.user.pk question.creator.pk %}
+		<div class="incoming-results"}{% if total_votes == 0 %} style="display: none;"{% endif %}>
+			<h2>The results are in!</h2>
+			<p class="realtime-explanation">People&rsquo;s votes will appear here in realtime.</p>
+			
+			<table class="results">
+				{% for result in results %}
+					<tr data-id="{{ result.pk }}">
+						<td class="answer">{{ result.title }}</td>
+						<td class="percent">
+							<div class="meter">
+								<div class="bar" style="width: {{ result.percent }}%;"></div>
+							</div>
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+		</div>
+	{% endifequal %}
 {% endblock question_content %}
+
+{% block javascript %}
+	{{ block.super }}
+	<script>
+		$(document).ready(
+			function() {
+				$(document).on('qanda:results',
+					function(e, results) {
+						for(var i = 0; i < results.length; i ++) {
+							var result = results[i];
+							var row = $('table.results tr[data-id="' + result.answer + '"]');
+							
+							row.find('.bar').animate(
+								{
+									width: result.percent + '%'
+								}
+							);
+						}
+						
+						$('.incoming-results').slideDown();
+					}
+				);
+			}
+		);
+	</script>
+{% endblock javascript %}

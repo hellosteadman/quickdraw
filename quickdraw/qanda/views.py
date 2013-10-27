@@ -1,12 +1,18 @@
 from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils.timezone import now
 from django.db.models import Count
 from django.contrib import messages
+from django.contrib.sites.models import Site
+from django.views.decorators.cache import never_cache
 from quickdraw.qanda.models import Question, Answer, Vote
 from quickdraw.qanda.forms import QuestionForm
-from django.views.decorators.cache import never_cache
+from quickdraw.qanda import broadcast
+from twitter import Twitter, OAuth
+from social_auth.models import UserSocialAuth
+from bambu.urlshortener import shorten
 import random
 
 @never_cache
@@ -24,6 +30,58 @@ def create(request):
 					title = answer,
 					creator = request.user
 				)
+		
+		access = UserSocialAuth.objects.get(
+			user = request.user,
+			provider = 'twitter'
+		).tokens
+		
+		api = Twitter(
+			auth = OAuth(
+				access['oauth_token'],
+				access['oauth_token_secret'],
+				settings.TWITTER_CONSUMER_KEY,
+				settings.TWITTER_CONSUMER_SECRET
+			)
+		)
+		
+		url = shorten(
+			'http://%s%s' % (
+				Site.objects.get_current().domain,
+				question.get_absolute_url()
+			)
+		)
+		
+		timescale = (question.closes - question.opens)
+		if timescale.seconds > 90:
+			duration = '%d minutes' % int(round(float(timescale.seconds) / 60.0))
+		else:
+			duration = '%d seconds' % timescale.seconds
+		
+		tweet = 'This snap %s will close in %s. %s %s' % (
+			question.get_kind_display(), duration,
+			question.title, url
+		)
+		
+		if len(tweet) > 140:
+			tweet = '%s snap %s: %s %s' % (
+				duration[:-1], question.get_kind_display(),
+				question.title, url
+			)
+			
+			if len(tweet) > 140:
+				tweet = 'Snap %s: %s: %s' % (
+					question.get_kind_display(), question.title, url
+				)
+				
+				if len(tweet) > 140:
+					tweet = '%s: %s' % (
+						question.title, url
+					)
+		
+		api.statuses.update(
+			status = tweet
+		)
 		
 		return HttpResponseRedirect(
 			question.get_absolute_url()
@@ -68,7 +126,8 @@ def question(request, slug):
 						answer.votes.create(
 							voter = request.user
 						)
-				
+					
+						broadcast.new_vote(answer)
 						messages.success(request, u'Thanks for your vote!')
 						return HttpResponseRedirect(
 							question.get_absolute_url()
@@ -76,7 +135,7 @@ def question(request, slug):
 			else:
 				added = 0
 				for answer in request.POST.getlist('answer[]'):
-					if not answer and not title.trim():
+					if not answer and not answer.strip():
 						continue
 					
 					try:
@@ -90,6 +149,7 @@ def question(request, slug):
 						)
 						
 						added += 1
+						broadcast.new_answer(answer)
 					
 					if not answer.votes.filter(voter = request.user).exists():
 						answer.votes.create(voter = request.user)
@@ -103,28 +163,30 @@ def question(request, slug):
 				
 				return HttpResponseRedirect(question.get_absolute_url())
 	
-	results = []
 	if question.closes > right_now:
 		seconds = (question.closes - right_now).seconds
 	else:
 		seconds = 0
-		r = lambda: random.randint(0,255)
-		
-		for result in question.answers.annotate(vote_count = Count('votes')).order_by('created'):
-			results.append(
-				{
-					'title': result.title,
-					'votes': result.vote_count,
-					'percent': total_votes > 0 and (
-						float(result.vote_count) / float(total_votes) * 100.0
-					) or 0,
-					'colour': '#%02X%02X%02X' % (r(), r(), r())
-				}
-			)
+	
+	results = []
+	r = lambda: random.randint(0, 255)
+	for result in question.answers.annotate(vote_count = Count('votes')).order_by('created'):
+		results.append(
+			{
+				'pk': result.pk,
+				'title': result.title,
+				'votes': result.vote_count,
+				'percent': total_votes > 0 and (
+					float(result.vote_count) / float(total_votes) * 100.0
+				) or 0,
+				'colour': '#%02X%02X%02X' % (r(), r(), r())
+			}
+		)
 	
 	kind = (question.kind == 'p' and 'poll' or 'list')
 	auth = request.user.is_authenticated() and 'auth' or 'anon'
 	state = seconds and 'open' or 'closed'
+	duration = (question.closes - question.opens).seconds
 	
 	return TemplateResponse(
 		request,
@@ -142,6 +204,8 @@ def question(request, slug):
 			'results': results,
 			'vote_cast': vote_cast,
 			'total_votes': total_votes,
+			'duration': duration,
+			'SOCKETIO_PORT': settings.SOCKETIO_PORT,
 			'title_parts': (question.title,)
 		}
 	)

@@ -1,4 +1,4 @@
-{% extends 'qanda/question.html' %}
+{% extends 'qanda/question-open.html' %}
 {% load icons humanize %}
 {% load url from future %}
 
@@ -22,6 +22,20 @@
 		
 		{% csrf_token %}
 	</form>
+	
+	{% ifequal request.user.pk question.creator.pk %}
+		<p class="realtime-explanation">People&rsquo;s answers will appear here in realtime.</p>
+		<div class="submitted-answers"{% if results|length == 0 %} style="display: none;"{% endif %}>
+			<h2>The results are in!</h2>
+			<ol class="results">
+				{% for result in results %}
+					<li style="color: {{ result.colour }}">
+						{{ result.title }}
+					</li>
+				{% endfor %}
+			</ol>
+		</div>
+	{% endifequal %}
 {% endblock question_content %}
 
 {% block javascript %}
@@ -105,6 +119,24 @@
 				);
 				
 				$('input.answer:first').focus();
+				$(document).on('qanda:answer',
+					function(e, answer) {
+						var r = function() {
+							return Math.floor(Math.random() * 256)
+						};
+						
+						var li = $('<li>' + answer + '</li>').css(
+							{
+								'color': 'rgb(' + r() + ', ' + r() + ', ' + r() + ')',
+								'display': 'none'
+							}
+						);
+						
+						$('.submitted-answers').slideDown().find('ol').prepend(li);
+						li.slideDown();
+						$('.realtime-explanation').slideUp();
+					}
+				);
 			}
 		);
 	</script>

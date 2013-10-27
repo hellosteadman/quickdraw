@@ -109,6 +109,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
+SHORTURL_PROVIDER = 'bambu.urlshortener.providers.bitly.BitlyProvider'
 
 BOOTSTRAP_CSS_URL = 'css/bootstrap.min.css'
 BOOTSTRAP_NAVBAR_INVERSE = True
+SOCKETIO_PORT = 8081

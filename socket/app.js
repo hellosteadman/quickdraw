@@ -3,7 +3,6 @@ var io = require('socket.io').listen(app);
 var fs = require('fs');
 
 app.listen(8081);
-
 function handler(req, res) {
 	fs.readFile(
 		__dirname + '/index.html',
@@ -20,15 +19,15 @@ function handler(req, res) {
 
 io.sockets.on('connection',
 	function(socket) {
-		socket.emit('news',
-			{
-				hello: 'world'
+		socket.on('voteSent',
+			function(data) {
+				io.sockets.emit('voteReceived', data);
 			}
 		);
 		
-		socket.on('my other event',
+		socket.on('answerSent',
 			function(data) {
-				console.log(data);
+				io.sockets.emit('answerReceived', data);
 			}
 		);
 	}

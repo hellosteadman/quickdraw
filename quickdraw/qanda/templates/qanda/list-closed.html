@@ -4,6 +4,14 @@
 
 {% block question_content %}
 	<h2>The results are in!</h2>
+	
+	{% if results|length > 0 %}
+		<p>
+			{{ results|length|apnumber|title }} answer{{ results|length|pluralize:' was,s were' }}
+			submitted in {{ question.opens|timesince:question.closes }}.
+		</p>
+	{% endif %}
+	
 	<ol class="results">
 		{% for result in results %}
 			<li style="color: {{ result.colour }}">

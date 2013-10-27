@@ -77,6 +77,7 @@ INSTALLED_APPS = (
 	'social_auth',
 	'bambu.bootstrap',
 	'bambu.enqueue',
+	'bambu.cron',
 	'quickdraw.qanda'
 )
 

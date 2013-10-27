@@ -1,0 +1,18 @@
+{% extends 'qanda/question.html' %}
+{% load icons humanize %}
+{% load url from future %}
+
+{% block question_content %}
+	<h2>The results are in!</h2>
+	<ol class="results">
+		{% for result in results %}
+			<li style="color: {{ result.colour }}">
+				{{ result.title }}
+			</li>
+		{% empty %}
+			<li class="empty">Sorry, this list is empty.</li>
+		{% endfor %}
+	</ol>
+	
+	{% include 'qanda/share-and-enjoy.inc.html' %}
+{% endblock question_content %}

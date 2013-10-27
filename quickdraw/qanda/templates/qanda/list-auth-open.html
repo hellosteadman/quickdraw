@@ -1,0 +1,111 @@
+{% extends 'qanda/question.html' %}
+{% load icons humanize %}
+{% load url from future %}
+
+{% block question_content %}
+	<p>
+		Add one or more answers to this question.
+	</p>
+	
+	<form method="post" class="answer-question">
+		<div class="answers">
+			<p class="answer">
+				<input name="answer[]" type="text" class="answer" placeholder="Enter an answer" maxlength="255" />
+				<a class="delete-answer" href="#">&times;</a>
+			</p>
+		</div>
+		
+		<p>
+			<button id="add" class="btn btn-primary">{% icon 'plus' %} Add another</button>
+			<button id="save" class="btn btn-success" type="submit">{% icon 'ok' %} Submit answers</button>
+		</p>
+		
+		{% csrf_token %}
+	</form>
+{% endblock question_content %}
+
+{% block javascript %}
+	{{ block.super }}
+	
+	<script>
+		function addAnswer() {
+			var hiddenAnswer = $('p.answer:visible');
+			if(hiddenAnswer.length == 0) {
+				$('p.answer').slideDown().find('input').focus();
+				$('a#add').html('Add another question');
+			} else {
+				var answer = $('p.answer:first').clone();
+				
+				answer.find('input').on('keypress',
+					function(e) {
+						if (e.keyCode == 13 && location.hash) {
+							e.preventDefault();
+							if($(this).val()) {
+								addAnswer();
+							}
+						}
+					}
+				);
+				
+				answer.find('a.delete-answer').on('click',
+					function(e) {
+						$(this).closest('.answer').slideUp(
+							function() {
+								$(this).remove();
+							}
+						);
+					}
+				);
+				
+				$('form.answer-question .answers').append(answer);
+				answer.slideDown().find('input').focus().val('');
+				$('.duration-container').slideDown();
+			}
+		}
+		
+		$(document).ready(
+			function() {
+				$('input.answer').on('keypress',
+					function(e) {
+						if (e.keyCode == 13 && location.hash) {
+							e.preventDefault();
+							if($(this).val()) {
+								addAnswer();
+							}
+						}
+					}
+				);
+				
+				$('button#add').on('click',
+					function(e) {
+						e.preventDefault();
+						addAnswer();
+					}
+				);
+				
+				$('form.answer-question').on('submit',
+					function(e) {
+						var answers = [];
+						
+						$(this).find('input.answer').each(
+							function() {
+								if($(this).val()) {
+									answers.push(
+										$(this).val()
+									);
+								}
+							}
+						);
+						
+						if(answers.length < 1) {
+							e.preventDefault();
+							alert('Whoops! You need to add at least one answer');
+						}
+					}
+				);
+				
+				$('input.answer:first').focus();
+			}
+		);
+	</script>
+{% endblock javascript %}

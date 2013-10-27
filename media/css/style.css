@@ -1,0 +1,70 @@
+body { padding-top: 60px; }
+.alert { text-align: center; }
+
+.navbar-inverse, .navbar-inverse .navbar-inner {
+	background: #900; background-image: none;
+}
+
+.navbar-inverse .brand, .navbar-inverse .nav>li > a { color: rgba(255, 255, 255, 0.75); }
+
+.navbar-inverse .brand {
+	margin: 3px 0 0 0; padding: 12px 0 10px 25px; height: 15px;
+	background: url('../img/logo.png') no-repeat top left;
+	font-family: 'BenchNine'; text-transform: uppercase;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a, .dropdown-submenu:focus > a {
+	background: #faa;
+}
+
+.page-header { text-align: center; }
+a.btn { border-bottom: 3px solid rgba(0, 0, 0, 0.5); }
+
+h1 { font-family: 'BenchNine'; text-transform: uppercase; color: #900; }
+h2 { font-family: 'BenchNine'; text-transform: uppercase; color: #900; }
+
+.form-content p, footer p { text-align: center; }
+.form-content p.title-container, .form-content .duration-container { display: none; }
+.form-content input.title, .form-content input.answer {
+	padding: 10px; text-align: center;
+}
+
+.form-content p.answer { display: none; line-height: 32px; }
+.question .form-content p.answer { display: block; }
+.form-content p.answer:first-child a.delete-answer { display: none; }
+.form-content input.title { font-size: 1.5em; }
+
+.welcome p { font-size: 1.5em; line-height: 1.5em; color: #999; }
+.form-content h2 { text-align: center; }
+.form-content .duration-container ul {
+	list-style-type: none; margin: 0; padding: 0;
+}
+
+.form-content .duration-container ul { text-align: center; margin-bottom: 0.5em; }
+.form-content .duration-container li { display: inline-block; }
+.form-content .duration-container label {
+	color: #ff0; background: #333; padding: 10px; display: inline-block;
+	margin-left: 5px; font-weight: bold;
+}
+
+.form-content .duration-container label input {
+	display: none;
+}
+
+.form-content .duration-container label.active {
+	background: #ff0; color: #333;
+}
+
+.seconds-remaining { font-size: 2em; }
+
+table.results, ol.results {
+	width: 50%; max-width: 400px; margin: 0 auto 1em auto;
+	font-size: 1.25em; line-height: 1.5em; padding: 0;
+}
+table.results td { text-align: left; vertical-align: middle; }
+table.results td.answer { width: 60%; white-space: nowrap; }
+table.results td.percent .meter { background: #f4f4f4; margin: auto; width: 100%; height: 10px; position: relative; }
+table.results td.percent .meter .bar { background: #900; height: 10px; position: absolute; left: 0; }
+
+ol.results { list-style-type: none; text-align: center; }

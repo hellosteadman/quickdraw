@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load url from future %}
+
+{% block page_header %}
+	<h1>{{ question.title }}</h1>
+	
+	<p>
+		This is a flash {{ question.get_kind_display }} created by
+		<a href="http://twitter.com/{{ question.creator.username }}" target="_blank">{{ question.creator.get_full_name|default:question.creator }}</a>
+		via <a href="http://{{ SITE.domain }}/">{{ SITE.name }}</a>
+	</p>
+	
+	{% if remaining_seconds %}
+		<p>
+			Just <span class="seconds-remaining">{{ remaining_seconds }}</span>
+			second<span class="seconds-plural">s</span>
+			remaining
+		</p>
+	{% endif %}
+{% endblock page_header %}
+
+{% block form_content %}
+	{% block question_content %}{% endblock %}
+{% endblock form_content %}
+
+{% block javascript %}
+	<Script>
+		$(document).ready(
+			function() {
+				{% if remaining_seconds %}
+					var timer = setInterval(
+						function() {
+							var seconds = parseInt($('.seconds-remaining').html());
+							
+							seconds --;
+							if(seconds == 1) {
+								$('.seconds-plural').hide();
+							} else {
+								$('.seconds-plural').show();
+							}
+							
+							$('.seconds-remaining').html(seconds);
+							
+							if(!seconds) {
+								clearInterval(timer);
+								document.location = '{{ request.path|escapejs }}';
+							}
+						},
+						1000
+					);
+				{% endif %}
+			}
+		);
+	</script>
+{% endblock javascript %}

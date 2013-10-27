@@ -1,0 +1,6 @@
+{% load icons %}
+
+<p>
+	<a class="btn btn-primary" href="#">{% icon 'twitter' %} Tweet the results</a>
+	<a class="btn btn-success" href="/{% ifequal question.kind 'p' %}#poll{% else %}#list{% endifequal %}">{% icon 'plus' %} Create {% ifequal question.creator request.user %}another{% else %}your own{% endifequal %} {{ question.get_kind_display }}</a>
+</p>

@@ -1,0 +1,9 @@
+<form method="post">
+	{% for answer in answers %}
+		<p>
+			<button class="btn btn-primary" type="submit" name="answer" value="{{ answer.pk }}">{{ answer.title }}</button>
+		</p>
+	{% endfor %}
+	
+	{% csrf_token %}
+</form>

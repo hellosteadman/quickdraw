@@ -1,0 +1,8 @@
+{% load url from future %}
+{% load icons %}
+
+<ul class="nav navbar-nav pull-right">
+	<li>
+		<a href="{% url 'socialauth_begin' 'twitter' %}">{% icon 'twitter' %} Login via Twitter</a>
+	</li>
+</ul>

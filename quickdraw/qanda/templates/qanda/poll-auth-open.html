@@ -1,0 +1,18 @@
+{% extends 'qanda/question.html' %}
+{% load icons humanize %}
+{% load url from future %}
+
+{% block question_content %}
+	{% if not vote_cast %}
+		{% include 'qanda/poll-vote.inc.html' %}
+	{% else %}
+		<p>
+			Your vote has already been cast.<br />
+			Check back here in a few seconds to see the results.
+		</p>
+		
+		<p>
+			<a class="btn btn-success" href="/{% ifequal question.kind 'p' %}#poll{% else %}#list{% endifequal %}">{% icon 'plus' %} Create {% ifequal request.user.pk question.creator.pk %}a new{% else %}your own{% endifequal %} {{ question.get_kind_display }}</a>
+		</p>
+	{% endif %}
+{% endblock question_content %}

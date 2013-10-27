@@ -1,0 +1,27 @@
+{% extends 'qanda/question.html' %}
+{% load icons humanize %}
+{% load url from future %}
+
+{% block question_content %}
+	<h2>The results are in!</h2>
+	
+	<p>
+		{{ total_votes|apnumber|title }} {{ total_votes|pluralize:'person,people' }}
+		{% ifequal question.kind 'p' %}voted on this poll{% else %}submitted answers to this question{% endifequal %}.
+	</p>
+	
+	<table class="results">
+		{% for result in results %}
+			<tr>
+				<td class="answer">{{ result.title }}</td>
+				<td class="percent">
+					<div class="meter">
+						<div class="bar" style="width: {{ result.percent }}%;"></div>
+					</div>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	
+	{% include 'qanda/share-and-enjoy.inc.html' %}
+{% endblock question_content %}

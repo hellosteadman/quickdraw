@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load url from future %}
+{% load icons %}
+
+{% block page_header %}
+	{% if request.user.is_anonymous %}
+		<section class="welcome">
+			<h1>Create a short-run poll</h1>
+			<p>
+				With {{ SITE.name }} you can create a short-lived <strong>poll</strong> or
+				<strong>list</strong><br />and tweet it to your followers to <strong>get answers fast</strong>.
+			</p>
+		</section>
+	{% else %}
+		<h1>Create a <a href="#list">list</a> or a <a href="#poll">poll</a>?</h1>
+		<p>
+			Create a poll with at least two options or a list for people to contribute to.<br />
+			Your followers will get a limited amount of time to answer, and then the poll will close.
+		</p>
+	{% endif %}
+{% endblock page_header %}
+
+{% block form_content %}
+	{% if request.user.is_anonymous %}
+		<p>
+			<a class="btn btn-primary btn-large" href="{% url 'socialauth_begin' 'twitter' %}">
+				{% icon 'twitter' %} Login via Twitter <small>to get started</small>
+			</a>
+		</p>
+	{% else %}
+		<form class="create-question" method="post" action="{% url 'create_question' %}">
+			<p class="title-container">{{ form.title }}</p>
+			
+			{% for error in form.non_field_errors %}
+				<div class="alert alert-error">{{ error }}</div>
+			{% endfor %}
+			
+			<div id="poll" style="display: none;">
+				<div class="answers">
+					<p class="answer">
+						<input name="answer[]" type="text" class="answer" placeholder="Enter an answer" maxlength="255" />
+						<a class="delete-answer" href="#">&times;</a>
+					</p>
+				</div>
+				
+				<p>
+					<a class="btn btn-primary" id="add">Add your first answer</a>
+				</p>
+			</div>
+			
+			<div id="list" style="display: none;">
+				<p>
+					With a list, people can contribute their own answers.
+				</p>
+				
+				<hr />
+			</div>
+			
+			<div class="duration-container">
+				<p>How many seconds do you want the question to run for?</p>
+				{{ form.duration }}
+				
+				<p>
+					<button class="btn btn-large btn-success" id="save" type="submit">I&rsquo;m all done!</button>
+				</p>
+			</div>
+			
+			{{ form.hidden_fields|join:'' }}
+			{% csrf_token %}
+		</form>
+	{% endif %}
+{% endblock form_content %}
+
+{% block javascript %}
+	{{ block.super }}
+	
+	{% if request.user.is_authenticated %}
+		<script>
+			function hashUp() {
+				if(!location.hash) {
+					return;
+				}
+				
+				switch(location.hash.substr(1)) {
+					case 'list':
+						$('.title-container').slideDown(
+							function() {
+								$('#list').slideDown(
+									function() {
+										$('.duration-container').slideDown();
+									}
+								);
+								$('input.title').focus();
+							}
+						);
+						
+						$('#poll').hide();
+						$('#id_kind').val('l');
+						break;
+					case 'poll':
+						$('.title-container').slideDown(
+							function() {
+								$('#poll').slideDown(
+									function() {
+										$('.duration-container').slideUp();
+									}
+								);
+								$('input.title').focus();
+							}
+						);
+						
+						$('#list').hide();
+						$('#id_kind').val('p');
+				}
+			}
+			
+			function addAnswer() {
+				var hiddenAnswer = $('p.answer:visible');
+				if(hiddenAnswer.length == 0) {
+					$('p.answer').slideDown().find('input').focus();
+					$('a#add').html('Add another question');
+				} else {
+					var answer = $('p.answer:first').clone();
+					
+					answer.find('input').on('keypress',
+						function(e) {
+							if (e.keyCode == 13 && location.hash) {
+								e.preventDefault();
+								if($(this).val()) {
+									addAnswer();
+								}
+							}
+						}
+					);
+					
+					answer.find('a.delete-answer').on('click',
+						function(e) {
+							$(this).closest('.answer').slideUp(
+								function() {
+									$(this).remove();
+								}
+							);
+						}
+					);
+					
+					$('form.create-question .answers').append(answer);
+					answer.slideDown().find('input').focus().val('');
+					$('.duration-container').slideDown();
+				}
+			}
+			
+			$(document).ready(hashUp);
+			$(window).hashchange(hashUp);
+			
+			$('input.title, input.answer').on('keypress',
+				function(e) {
+					if (e.keyCode == 13 && location.hash) {
+						e.preventDefault();
+						if($(this).val()) {
+							addAnswer();
+						}
+					}
+				}
+			);
+			
+			$('a#add').on('click',
+				function(e) {
+					e.preventDefault();
+					addAnswer();
+				}
+			);
+			
+			$('form.create-question').on('submit',
+				function(e) {
+					if(!$(this).find('input.title').val()) {
+						alert('Whoops! You need to give your question a title');
+						e.preventDefault();
+						return;
+					}
+					
+					if(!$(this).find('.duration-container label.active input').val()) {
+						alert('Whoops! You need to select the duration of your question');
+						e.preventDefault();
+						return;
+					}
+					
+					if(location.hash == '#poll') {
+						var answers = [];
+						
+						$(this).find('input.answer').each(
+							function() {
+								if($(this).val()) {
+									answers.push(
+										$(this).val()
+									);
+								}
+							}
+						);
+						
+						if(answers.length < 2) {
+							e.preventDefault();
+							alert('Whoops! You need to create at least two possible answers');
+						}
+					}
+				}
+			);
+			
+			$('.duration-container input').on('click',
+				function() {
+					$(this).closest('.duration-container').find('label.active').removeClass('active');
+					$(this).closest('label').addClass('active');
+				}
+			);
+		</script>
+	{% endif %}
+{% endblock javascript %}

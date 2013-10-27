@@ -1,0 +1,11 @@
+{% extends 'qanda/question.html' %}
+{% load icons humanize %}
+{% load url from future %}
+
+{% block question_content %}
+	<p>
+		<a class="btn btn-primary btn-large" href="{% url 'socialauth_begin' 'twitter' %}?next={{ request.path|urlencode }}">
+			{% icon 'twitter' %} Login via Twitter <small>to answer this poll</small>
+		</a>
+	</p>
+{% endblock question_content %}

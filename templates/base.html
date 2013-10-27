@@ -1,4 +1,5 @@
 {% extends 'bootstrap/base.html' %}
+{% load analytics %}
 
 {% block extra_head %}
 	<link href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" />
@@ -19,4 +20,6 @@
 	{{ block.super }}
 	<script src="//steadman.io/media/js/widget.js"></script>
 	<Script src="{{ MEDIA_URL }}js/jquery.hashchange.js"></script>
+	
+	{% tracking %}
 {% endblock javascript %}

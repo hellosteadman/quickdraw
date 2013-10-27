@@ -78,6 +78,7 @@ INSTALLED_APPS = (
 	'bambu.bootstrap',
 	'bambu.enqueue',
 	'bambu.cron',
+	'bambu.analytics',
 	'quickdraw.qanda'
 )
 

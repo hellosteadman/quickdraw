@@ -72,6 +72,7 @@ INSTALLED_APPS = (
 	'django.contrib.admindocs',
 	'django.contrib.humanize',
 	'django.contrib.markup',
+	'raven.contrib.django.raven_compat',
 	'south',
 	'social_auth',
 	'bambu.bootstrap',
@@ -98,8 +99,8 @@ LOGGING = {
 		'django.request': {
 			'handlers': ['mail_admins'],
 			'level': 'ERROR',
-			'propagate': True,
-		},
+			'propagate': True
+		}
 	}
 }
 

@@ -20,7 +20,7 @@ class QuestionJob(cron.CronJob):
 				provider = 'twitter'
 			).tokens
 			
-			tweet = 'The results of the snap %s are in! %s Create yoru own at http://%s/' % (
+			tweet = 'The results of the snap %s are in! %s Create your own at http://%s/' % (
 				question.get_kind_display(),
 				shorten(
 					'http://%s%s' % (

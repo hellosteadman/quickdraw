@@ -14,7 +14,7 @@ urlpatterns = patterns('',
 				template_name = 'home.html',
 				extra_context = {
 					'menu_selection': 'home',
-					'title_parts': ('Podcasting among friends',),
+					'title_parts': ('Create short-run polls and lists',),
 					'form': QuestionForm()
 				}
 			), 'home'

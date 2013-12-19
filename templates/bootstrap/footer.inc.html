@@ -1,1 +1,9 @@
-<p>&copy; {% now 'Y' %} <a href="http://steadman.io/">Steadman</a>
+{% load icons %}
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<form id="stripe-form" action="" method="POST" class="pull-right">
+	<button id="donate" class="btn btn-success">
+		{% icon 'beer' %} Buy Steadman a beer <small>(&pound;3)</small></small>
+	</button>
+</form>
+
+<p class="pull-left">&copy; {% now 'Y' %} <a href="http://steadman.io/">Steadman</a>

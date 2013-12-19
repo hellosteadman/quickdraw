@@ -19,7 +19,36 @@
 {% block javascript %}
 	{{ block.super }}
 	<script src="//steadman.io/media/js/widget.js"></script>
-	<Script src="{{ MEDIA_URL }}js/jquery.hashchange.js"></script>
+	<script src="{{ MEDIA_URL }}js/jquery.hashchange.js"></script>
+	<script>
+		var handler = StripeCheckout.configure(
+			{
+				key: '{{ STRIPE_KEY }}',
+				token: function(token, args) {
+					window.location = '{% url 'donate' %}?token=' + escape(token.id) + '&next=' + escape(window.location);
+				}
+			}
+		);
+		
+		$(document).ready(
+			function() {
+				$('#donate').on('click',
+					function(e) {
+						handler.open(
+							{
+								name: '{{ SITE.name }}',
+								description: 'Buy Steadman a bear (£3.00)',
+								amount: 300,
+								currency: 'GBP'
+							}
+						);
+						
+						e.preventDefault();
+					}
+				);
+			}
+		);
+	</script>
 	
 	{% tracking %}
 {% endblock javascript %}

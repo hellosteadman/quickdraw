@@ -54,7 +54,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.request',
 	'django.contrib.messages.context_processors.messages',
 	'django.core.context_processors.tz',
-	'bambu.bootstrap.context_processors.basics'
+	'bambu.bootstrap.context_processors.basics',
+	'quickdraw.context_processors.settings'
 )
 
 ROOT_URLCONF = 'quickdraw.urls'
@@ -80,7 +81,8 @@ INSTALLED_APPS = (
 	'bambu.enqueue',
 	'bambu.cron',
 	'bambu.analytics',
-	'quickdraw.qanda'
+	'quickdraw.qanda',
+	'quickdraw.donations'
 )
 
 LOGGING = {

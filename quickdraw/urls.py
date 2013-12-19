@@ -25,6 +25,7 @@ urlpatterns = patterns('',
 		name = 'home'
 	),
 	url(r'^logout/$', 'quickdraw.views.logout', name = 'logout'),
-	url(r'', include('quickdraw.qanda.urls')),
+	url(r'^', include('quickdraw.qanda.urls')),
+	url(r'^donate/', include('quickdraw.donations.urls')),
 	url(r'', include('social_auth.urls'))
 )

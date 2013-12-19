@@ -68,3 +68,7 @@ table.results td.percent .meter { background: #f4f4f4; margin: auto; width: 100%
 table.results td.percent .meter .bar { background: #900; height: 10px; position: absolute; left: 0; }
 
 ol.results { list-style-type: none; text-align: center; }
+#stripe-form { text-align: center; }
+..stripe-button-el span {
+	width: 239px; height: 46px;
+}

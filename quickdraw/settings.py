@@ -77,7 +77,7 @@ INSTALLED_APPS = (
 	'raven.contrib.django.raven_compat',
 	'south',
 	'social_auth',
-	'bambu.bootstrap',
+	'bambu.bootstrap.v2',
 	'bambu.enqueue',
 	'bambu.cron',
 	'bambu.analytics',

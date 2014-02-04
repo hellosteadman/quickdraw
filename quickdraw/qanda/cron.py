@@ -14,7 +14,7 @@ class QuestionJob(cron.CronJob):
 		date = now()
 		domain = Site.objects.get_current().domain
 		
-		for question in Question.objects.filter(closes__lte = date, tweeted = False):
+		for question in Question.objects.select_for_update().filter(closes__lte = date, tweeted = False):
 			access = UserSocialAuth.objects.get(
 				user = question.creator,
 				provider = 'twitter'
@@ -40,8 +40,8 @@ class QuestionJob(cron.CronJob):
 				)
 			)
 			
+			api.statuses.update(status = tweet)
 			question.tweeted = True
 			question.save()
-			api.statuses.update(status = tweet)
 
 cron.site.register(QuestionJob)

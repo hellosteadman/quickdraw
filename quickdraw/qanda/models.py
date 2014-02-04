@@ -15,8 +15,8 @@ class Question(models.Model):
 	opens = models.DateTimeField(auto_now_add = True)
 	closes = models.DateTimeField(editable = False)
 	title = models.CharField(max_length = 117)
-	public = models.BooleanField()
-	tweeted = models.BooleanField()
+	public = models.BooleanField(default = True)
+	tweeted = models.BooleanField(default = False)
 	
 	@models.permalink
 	def get_absolute_url(self):

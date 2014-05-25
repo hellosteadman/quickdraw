@@ -40,8 +40,12 @@ class QuestionJob(cron.CronJob):
 				)
 			)
 
+			try:
+				api.statuses.update(status = tweet)
+			except:
+				logger.warn(u'Error sending tweet')
+
 			question.tweeted = True
 			question.save()
-			api.statuses.update(status = tweet)
 
 cron.site.register(QuestionJob)

@@ -3,7 +3,7 @@
 {% block javascript %}
 	<script src="//{{ SITE.domain }}:{{ SOCKETIO_PORT }}/socket.io/socket.io.js"></script>
 	<script>
-		var socket = io.connect('http://{{ SITE.domain }}:{{ SOCKETIO_PORT }}/socket.io');
+		var socket = io.connect('http://{{ SITE.domain }}:{{ SOCKETIO_PORT }}');
 		socket.on('connect',
 			function() {
 				socket.on('voteReceived',

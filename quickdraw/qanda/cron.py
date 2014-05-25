@@ -1,4 +1,4 @@
-from bambu import cron
+import bambu_cron as cron
 from django.utils.timezone import now
 from django.conf import settings
 from django.contrib.sites.models import Site

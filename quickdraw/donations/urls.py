@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from bambu.bootstrap.decorators import body_classes
+from bambu_bootstrap.decorators import body_classes
 from quickdraw.donations.views import *
 
 urlpatterns = patterns('',

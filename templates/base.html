@@ -1,16 +1,17 @@
 {% extends 'bootstrap/base.html' %}
-{% load analytics %}
+{% load analytics staticfiles %}
 
 {% block extra_head %}
-	<link href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" />
-	<link href='http://fonts.googleapis.com/css?family=BenchNine' rel='stylesheet' type='text/css'>
+	{{ block.super }}
+	<link href="{% static 'css/style.css' %}" rel="stylesheet" />
+	<link href='//fonts.googleapis.com/css?family=BenchNine' rel='stylesheet' type='text/css'>
 {% endblock extra_head %}
 
 {% block content %}
 	<div class="page-header" data-importance="2">
 		{% block page_header %}{% endblock %}
 	</div>
-	
+
 	<section class="form-content">
 		{% block form_content %}{% endblock %}
 	</section>
@@ -18,8 +19,7 @@
 
 {% block javascript %}
 	{{ block.super }}
-	<script src="//steadman.io/media/js/widget.js"></script>
-	<script src="{{ MEDIA_URL }}js/jquery.hashchange.js"></script>
+	<script src="{% static 'js/jquery.hashchange.js' %}"></script>
 	<script>
 		var handler = StripeCheckout.configure(
 			{
@@ -29,7 +29,7 @@
 				}
 			}
 		);
-		
+
 		$(document).ready(
 			function() {
 				$('#donate').on('click',
@@ -42,13 +42,13 @@
 								currency: 'GBP'
 							}
 						);
-						
+
 						e.preventDefault();
 					}
 				);
 			}
 		);
 	</script>
-	
+
 	{% tracking %}
 {% endblock javascript %}

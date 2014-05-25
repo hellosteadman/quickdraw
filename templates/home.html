@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load url from future %}
-{% load icons %}
+{% load icons forms %}
 
 {% block page_header %}
 	{% if request.user.is_anonymous %}
@@ -29,46 +29,46 @@
 		</p>
 	{% else %}
 		<form class="create-question" method="post" action="{% url 'create_question' %}">
-			<p class="title-container">{{ form.title }}</p>
-			
+			<p class="title-container">{{ form.title|bootstrapped }}</p>
+
 			{% for error in form.non_field_errors %}
 				<div class="alert alert-error">{{ error }}</div>
 			{% endfor %}
-			
+
 			<div id="poll" style="display: none;">
 				<div class="answers">
 					<p class="answer">
-						<input name="answer[]" type="text" class="answer" placeholder="Enter an answer" maxlength="255" />
+						<input name="answer[]" type="text" class="answer form-control" placeholder="Enter an answer" maxlength="255" />
 						<a class="delete-answer" href="#">&times;</a>
 					</p>
 				</div>
-				
+
 				<p>
 					<a class="btn btn-primary" id="add">Add your first answer</a>
 				</p>
 			</div>
-			
+
 			<div id="list" style="display: none;">
 				<p>
 					With a list, people can contribute their own answers.
 				</p>
 			</div>
-			
+
 			<div class="duration-container">
 				<p>How many seconds do you want the question to run for?</p>
 				{{ form.duration }}
-				
+
 				<p>
 					<button class="btn btn-large btn-success" id="save" type="submit">I&rsquo;m all done!</button>
 				</p>
-				
+
 				<p>
 					{% icon 'twitter' %} {{ SITE.name }} will send out a single tweet from your account, pointing to your new
 					list or poll.<br />Anyone can see the page, but people will need a Twitter account
 					to vote or contribute.
 				</p>
 			</div>
-			
+
 			{{ form.hidden_fields|join:'' }}
 			{% csrf_token %}
 		</form>
@@ -77,14 +77,14 @@
 
 {% block javascript %}
 	{{ block.super }}
-	
+
 	{% if request.user.is_authenticated %}
 		<script>
 			function hashUp() {
 				if(!location.hash) {
 					return;
 				}
-				
+
 				switch(location.hash.substr(1)) {
 					case 'list':
 						$('.title-container').slideDown(
@@ -97,7 +97,7 @@
 								$('input.title').focus();
 							}
 						);
-						
+
 						$('#poll').hide();
 						$('#id_kind').val('l');
 						break;
@@ -112,12 +112,12 @@
 								$('input.title').focus();
 							}
 						);
-						
+
 						$('#list').hide();
 						$('#id_kind').val('p');
 				}
 			}
-			
+
 			function addAnswer() {
 				var hiddenAnswer = $('p.answer:visible');
 				if(hiddenAnswer.length == 0) {
@@ -125,7 +125,7 @@
 					$('a#add').html('Add another question');
 				} else {
 					var answer = $('p.answer:first').clone();
-					
+
 					answer.find('input').on('keypress',
 						function(e) {
 							if (e.keyCode == 13 && location.hash) {
@@ -136,7 +136,7 @@
 							}
 						}
 					);
-					
+
 					answer.find('a.delete-answer').on('click',
 						function(e) {
 							$(this).closest('.answer').slideUp(
@@ -146,16 +146,16 @@
 							);
 						}
 					);
-					
+
 					$('form.create-question .answers').append(answer);
 					answer.slideDown().find('input').focus().val('');
 					$('.duration-container').slideDown();
 				}
 			}
-			
+
 			$(document).ready(hashUp);
 			$(window).hashchange(hashUp);
-			
+
 			$('input.title, input.answer').on('keypress',
 				function(e) {
 					if (e.keyCode == 13 && location.hash) {
@@ -166,14 +166,14 @@
 					}
 				}
 			);
-			
+
 			$('a#add').on('click',
 				function(e) {
 					e.preventDefault();
 					addAnswer();
 				}
 			);
-			
+
 			$('form.create-question').on('submit',
 				function(e) {
 					if(!$(this).find('input.title').val()) {
@@ -181,16 +181,16 @@
 						e.preventDefault();
 						return;
 					}
-					
+
 					if(!$(this).find('.duration-container label.active input').val()) {
 						alert('Whoops! You need to select the duration of your question');
 						e.preventDefault();
 						return;
 					}
-					
+
 					if(location.hash == '#poll') {
 						var answers = [];
-						
+
 						$(this).find('input.answer').each(
 							function() {
 								if($(this).val()) {
@@ -200,7 +200,7 @@
 								}
 							}
 						);
-						
+
 						if(answers.length < 2) {
 							e.preventDefault();
 							alert('Whoops! You need to create at least two possible answers');
@@ -208,7 +208,7 @@
 					}
 				}
 			);
-			
+
 			$('.duration-container input').on('click',
 				function() {
 					$(this).closest('.duration-container').find('label.active').removeClass('active');

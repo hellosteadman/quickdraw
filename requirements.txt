@@ -1,0 +1,5 @@
+django-bower
+bambu-analytics>=2.0
+bambu-bootstrap>=2.0
+bambu-cron>=2.0
+bambu-urlshortener>=2.0

@@ -1,13 +1,10 @@
-# Django settings for quickdraw project.
-
 from settings_local import *
 from os import path
 
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-	('Mark Steadman',
-	'marksteadman@me.com'),
+	('Steadman', 'mark@steadman.io'),
 )
 
 MANAGERS = ADMINS
@@ -17,15 +14,17 @@ SITE_ID = 1
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-MEDIA_ROOT = path.abspath(path.dirname(__file__) + '/../media/')
-MEDIA_URL = '/media/'
-STATIC_ROOT = path.abspath(path.dirname(__file__) + '/../static/')
-STATIC_URL = '/static/'
-STATICFILES_DIRS = ()
+
+STATICFILES_DIRS = (
+	path.join(path.dirname(__file__), 'static'),
+)
+
+BOWER_COMPONENTS_ROOT = path.abspath(path.dirname(__file__) + '/../')
 
 STATICFILES_FINDERS = (
 	'django.contrib.staticfiles.finders.FileSystemFinder',
 	'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+	'djangobower.finders.BowerFinder'
 )
 
 SECRET_KEY = 'd\6Bh>Dnq2igYT%J4y#wM:<UtQRz,-jC1S};&.^X|/Ixo[v]L0$e+u5H9`b(pc'
@@ -42,7 +41,7 @@ MIDDLEWARE_CLASSES = (
 	'django.middleware.csrf.CsrfViewMiddleware',
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
-	'bambu.analytics.middleware.AnalyticsMiddleware'
+	'bambu_analytics.middleware.AnalyticsMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -54,11 +53,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 	'django.core.context_processors.request',
 	'django.contrib.messages.context_processors.messages',
 	'django.core.context_processors.tz',
-	'bambu.bootstrap.context_processors.basics',
+	'bambu_bootstrap.context_processors.basics',
 	'quickdraw.context_processors.settings'
 )
 
 ROOT_URLCONF = 'quickdraw.urls'
+WSGI_APPLICATION = 'quickdraw.wsgi.application'
 TEMPLATE_DIRS = (
 	path.abspath(path.dirname(__file__) + '/../templates/'),
 )
@@ -73,16 +73,20 @@ INSTALLED_APPS = (
 	'django.contrib.admin',
 	'django.contrib.admindocs',
 	'django.contrib.humanize',
-	'django.contrib.markup',
 	'raven.contrib.django.raven_compat',
 	'south',
 	'social_auth',
-	'bambu.bootstrap.v2',
-	'bambu.enqueue',
-	'bambu.cron',
-	'bambu.analytics',
+	'djangobower',
+	'bambu_bootstrap',
+	'bambu_cron',
+	'bambu_analytics',
 	'quickdraw.qanda',
 	'quickdraw.donations'
+)
+
+BOWER_INSTALLED_APPS = (
+	'bootstrap',
+	'fontawesome'
 )
 
 LOGGING = {
@@ -107,8 +111,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
-SHORTURL_PROVIDER = 'bambu.urlshortener.providers.bitly.BitlyProvider'
+SHORTURL_PROVIDER = 'bambu_urlshortener.providers.bitly.BitlyProvider'
 
-BOOTSTRAP_CSS_URL = 'css/bootstrap.min.css'
 BOOTSTRAP_NAVBAR_INVERSE = True
 SOCKETIO_PORT = 8081

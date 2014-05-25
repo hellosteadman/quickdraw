@@ -1,8 +1,9 @@
 from django.conf.urls import patterns, include, url
+from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.contrib import admin
-from bambu.bootstrap.views import DirectTemplateView
-from bambu.bootstrap.decorators import body_classes
+from bambu_bootstrap.views import DirectTemplateView
+from bambu_bootstrap.decorators import body_classes
 from quickdraw.qanda.forms import QuestionForm
 admin.autodiscover()
 
@@ -25,7 +26,14 @@ urlpatterns = patterns('',
 		name = 'home'
 	),
 	url(r'^logout/$', 'quickdraw.views.logout', name = 'logout'),
-	url(r'^donate/', include('quickdraw.donations.urls')),
+	url(r'^donate/', include('quickdraw.donations.urls'))
+)
+
+if settings.DEBUG:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()
+
+urlpatterns += patterns('',
 	url(r'', include('social_auth.urls')),
-	url(r'', include('quickdraw.qanda.urls')),
+	url(r'', include('quickdraw.qanda.urls'))
 )

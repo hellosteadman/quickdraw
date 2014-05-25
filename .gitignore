@@ -1,5 +1,5 @@
 ._*
 *.pyc
 /logs
-quickdraw/settings_local.py
-static/*
+/quickdraw/settings_local.py
+/bower_components/*

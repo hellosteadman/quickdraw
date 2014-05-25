@@ -6,23 +6,23 @@
 	<p>
 		Add one or more answers to this question.
 	</p>
-	
+
 	<form method="post" class="answer-question">
 		<div class="answers">
 			<p class="answer">
-				<input name="answer[]" type="text" class="answer" placeholder="Enter an answer" maxlength="255" />
+				<input name="answer[]" type="text" class="form-control answer" placeholder="Enter an answer" maxlength="255" />
 				<a class="delete-answer" href="#">&times;</a>
 			</p>
 		</div>
-		
+
 		<p>
 			<button id="add" class="btn btn-primary">{% icon 'plus' %} Add another</button>
 			<button id="save" class="btn btn-success" type="submit">{% icon 'ok' %} Submit answers</button>
 		</p>
-		
+
 		{% csrf_token %}
 	</form>
-	
+
 	{% ifequal request.user.pk question.creator.pk %}
 		<p class="realtime-explanation">People&rsquo;s answers will appear here in realtime.</p>
 		<div class="submitted-answers"{% if results|length == 0 %} style="display: none;"{% endif %}>
@@ -40,7 +40,7 @@
 
 {% block javascript %}
 	{{ block.super }}
-	
+
 	<script>
 		function addAnswer() {
 			var hiddenAnswer = $('p.answer:visible');
@@ -49,7 +49,7 @@
 				$('a#add').html('Add another question');
 			} else {
 				var answer = $('p.answer:first').clone();
-				
+
 				answer.find('input').on('keypress',
 					function(e) {
 						if (e.keyCode == 13 && location.hash) {
@@ -60,7 +60,7 @@
 						}
 					}
 				);
-				
+
 				answer.find('a.delete-answer').on('click',
 					function(e) {
 						$(this).closest('.answer').slideUp(
@@ -70,13 +70,13 @@
 						);
 					}
 				);
-				
+
 				$('form.answer-question .answers').append(answer);
 				answer.slideDown().find('input').focus().val('');
 				$('.duration-container').slideDown();
 			}
 		}
-		
+
 		$(document).ready(
 			function() {
 				$('input.answer').on('keypress',
@@ -89,18 +89,18 @@
 						}
 					}
 				);
-				
+
 				$('button#add').on('click',
 					function(e) {
 						e.preventDefault();
 						addAnswer();
 					}
 				);
-				
+
 				$('form.answer-question').on('submit',
 					function(e) {
 						var answers = [];
-						
+
 						$(this).find('input.answer').each(
 							function() {
 								if($(this).val()) {
@@ -110,28 +110,28 @@
 								}
 							}
 						);
-						
+
 						if(answers.length < 1) {
 							e.preventDefault();
 							alert('Whoops! You need to add at least one answer');
 						}
 					}
 				);
-				
+
 				$('input.answer:first').focus();
 				$(document).on('qanda:answer',
 					function(e, answer) {
 						var r = function() {
 							return Math.floor(Math.random() * 256)
 						};
-						
+
 						var li = $('<li>' + answer + '</li>').css(
 							{
 								'color': 'rgb(' + r() + ', ' + r() + ', ' + r() + ')',
 								'display': 'none'
 							}
 						);
-						
+
 						$('.submitted-answers').slideDown().find('ol').prepend(li);
 						li.slideDown();
 						$('.realtime-explanation').slideUp();

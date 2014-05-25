@@ -3,7 +3,7 @@
 {% block javascript %}
 	<script src="//{{ SITE.domain }}:{{ SOCKETIO_PORT }}/socket.io/socket.io.js"></script>
 	<script>
-		var socket = io.connect('http://{{ SITE.domain }}:{{ SOCKETIO_PORT }}');
+		var socket = io.connect('http://{{ SITE.domain }}:{{ SOCKETIO_PORT }}/qanda');
 		socket.on('connect',
 			function() {
 				socket.on('voteReceived',
@@ -13,7 +13,7 @@
 						}
 					}
 				);
-				
+
 				socket.on('answerReceived',
 					function(e) {
 						if(e.question == {{ question.pk}}) {
@@ -24,6 +24,6 @@
 			}
 		);
 	</script>
-	
+
 	{{ block.super }}
 {% endblock javascript %}

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from twitter import Twitter, OAuth
 from social_auth.models import UserSocialAuth
-from quickdraw.qanda.models import Question, Answer, Vote
+from quickdraw.qanda.models import Question
 from bambu_urlshortener import shorten
 
 class QuestionJob(cron.CronJob):
@@ -15,11 +15,14 @@ class QuestionJob(cron.CronJob):
 		domain = Site.objects.get_current().domain
 
 		for question in Question.objects.filter(closes__lte = date, tweeted = False):
-			access = UserSocialAuth.objects.get(
-				user = question.creator,
-				provider = 'twitter'
-			).tokens
-
+			try:
+				access = UserSocialAuth.objects.get(
+					user = question.creator,
+					provider = 'twitter'
+				).tokens
+			except:
+				continue
+			
 			tweet = 'The results of the snap %s are in! %s Create your own at http://%s/' % (
 				question.get_kind_display(),
 				shorten(
